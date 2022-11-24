@@ -18,20 +18,25 @@ def segmentImg(image):
     hsvPlate = cv2.cvtColor(image2, cv2.COLOR_BGR2HSV)
     grayPlate = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
 
-    colorMin = np.array([13, 80, 100])
-    colorMax = np.array([100, 255, 255])
+    colorMin = np.array([24, 40, 158])
+    colorMax = np.array([49, 255, 255])
     holdImg = copy.deepcopy(image)
     mask = cv2.inRange(hsvPlate, colorMin, colorMax)
     segPlate = cv2.bitwise_and(holdImg, holdImg, mask=mask)
 
-    #cv2.imshow('img', segPlate)
-    #cv2.waitKey(0)
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (6, 6))
+    element_circle = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+    element3 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))
+    segPlate = cv2.erode(segPlate, element)
+    segPlate = cv2.dilate(segPlate, element)
 
     gray = cv2.cvtColor(segPlate, cv2.COLOR_RGB2GRAY)
     x = np.sum(gray, axis=0)
     x2 = np.nonzero(x)
     y = np.sum(gray, axis=1)
     y2 = np.nonzero(y)
+    y3 = y2[0][int((len(y2[0]) - 1) / 2)]
+    x3 = x2[0][int((len(x2[0]) - 1) / 2)]
 
     element2 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     crop = cv2.erode(image, element2)
@@ -39,10 +44,11 @@ def segmentImg(image):
     crop = crop[y2[0][0]:y2[0][-1], x2[0][0]:x2[0][-1], :]
     coord = [y2[0][0], y2[0][-1], x2[0][0], x2[0][-1]]
 
-    cv2.imshow('Cropped', crop)
-    cv2.waitKey(0)
+    image = cv2.circle(image, (x3, y3), radius=100, color=(255, 0, 0), thickness=1)
+    #cv2.imshow('Cropped', crop)
+    #cv2.waitKey(0)
 
-    return crop, coord
+    return image, x3, y3
 
 
 """
@@ -98,11 +104,11 @@ def findOffset(imageName):
     segmented, coords = segmentImg(img)
 
     #get demensions of segmented image
-    xs, ys, zs = segmented.shape
+    #xs, ys, zs = segmented.shape
 
-    x, y = findProbe(segmented)
+    #x, y = findProbe(segmented)
 
-    x, y = convertXY(x, y, xs, ys)
+    #x, y = convertXY(x, y, xs, ys)
 
 
     #print("X coord is {} and Y coord is {}".format(x, y))
@@ -116,5 +122,5 @@ def getFrame(img):
 
 #findOffset('BME.png')
 #findOffset('BME2.png')
-findOffset('BME3.jpeg')
+#findOffset('BME3.jpeg')
 
