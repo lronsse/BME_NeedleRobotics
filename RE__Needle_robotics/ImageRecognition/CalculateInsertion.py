@@ -42,7 +42,7 @@ def draw(newX, newY, steps):
     Y2 = newX  # End Y-coordinate
     #print(X2)
 
-    datasets = []  # Array of arrays containing all the x and y point for every hight
+    datasets = []  # Array of arrays containing all the x and y point for every height
     z2 = []
     x2 = []
     y2 = []
@@ -160,8 +160,8 @@ while True:
     newX = cv2.getTrackbarPos("Insertion Point", "Trackbars")
     goalX = cv2.getTrackbarPos("Goal X", "Trackbars")
     goalY = cv2.getTrackbarPos("Goal Y", "Trackbars")
-    frame = cv2.circle(frame, (0, newX), radius=10, color=(255, 0, 0), thickness=-1)
-    frame = cv2.circle(frame, (goalY, goalX), radius=10, color=(0, 0, 255), thickness=-1)
+    frame = cv2.circle(frame, (0, newX), radius=5, color=(255, 0, 0), thickness=-1)
+    frame = cv2.circle(frame, (goalY, goalX), radius=5, color=(0, 0, 255), thickness=-1)
     stacked = np.hstack((frame, frame2))
     cv2.imshow('Trackbars', cv2.resize(stacked, None, fx=0.8, fy=0.8))
 
@@ -170,8 +170,8 @@ while True:
     if key == 27:
         break
 
-    # If the user presses `s` then print this array.
-    if key == ord('s'):
+    # If the user presses `r` then print this array.
+    if key == ord('r'):
         thearray = [newX,goalX, goalY]
         #print(thearray)
 

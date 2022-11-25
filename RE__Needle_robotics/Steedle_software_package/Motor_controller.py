@@ -217,7 +217,7 @@ class motor_controller(object):
 
         send_arr(link, step_count_M1, step_count_M2, step_count_M3)
 
-        """
+
         ar = np.linspace(1,120, 40)
         
         #Projection of movement space of needle tip
@@ -251,7 +251,7 @@ class motor_controller(object):
         print('M1_arr=', step_count_M1, '\n')
         print('M2_arr=', step_count_M2, '\n')
         print('M3_arr=', step_count_M3, '\n')
-        """
+
 
         # Update position
         self.X_pos = X_coord
