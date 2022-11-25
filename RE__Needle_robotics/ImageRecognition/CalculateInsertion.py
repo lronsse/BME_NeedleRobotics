@@ -198,7 +198,7 @@ while True:
         thearray = [arrZ, arrX]
         # print(thearray)
         # Also save this array as penval.npy
-        np.save('Results', thearray)
+        np.save('Results2', thearray)
 
     frame = copy.deepcopy(img)
 # Release the camera & destroy the windows.
