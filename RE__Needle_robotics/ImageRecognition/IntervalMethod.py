@@ -1,7 +1,11 @@
-import numpy as np
+# Import essential libraries
+import requests
 import cv2
-# from Motor_controller import motor_controller
+import numpy as np
+import imutils
+import copy
 
-#data = np.load("Results2.npy")
-img = cv2.imread('BME3.png')
-cv2.imshow('hello', img)
+
+data = np.load('Results.npy')
+print(data)
+

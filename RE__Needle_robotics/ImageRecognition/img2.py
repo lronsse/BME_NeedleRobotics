@@ -123,4 +123,6 @@ def getFrame(img):
 #findOffset('BME.png')
 #findOffset('BME2.png')
 #findOffset('BME3.jpeg')
+data = np.load('Results.npy')
+print(data)
 
