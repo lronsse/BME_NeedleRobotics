@@ -145,7 +145,8 @@ img = cv2.resize(img, (int(y / 2), int(x / 2)))
 x2, y2, z2 = img2.shape
 img2 = cv2.resize(img, (int(y / 2), int(x / 2)))
 x, y, z = img.shape
-
+arrZ = np.array([])
+arrX = np.array([])
 
 cv2.createTrackbar("Insertion Point", "Trackbars", 0, x, nothing)
 cv2.createTrackbar("Goal X", "Trackbars", 0, x, nothing)
@@ -172,23 +173,26 @@ while True:
 
     # If the user presses `s` then print this array.
     if key == ord('s'):
-        thearray = [newX,goalX, goalY]
-        #print(thearray)
-
-        # Also save this array as penval.npy
-        np.save('Results', thearray)
         #break
-        steps = 20
+        steps = 15
         # For the graph goalY is the x and goalX is the y
         z_arr, x_arr = draw(goalY, (goalX - newX), steps)
         #print(np.array(z_arr) - 150)
         #print(x_arr)
         #print(newX)
+
         count = 1
         for val in np.array(z_arr) - 150:
             xV = int(val)
-            frame2 = cv2.circle(frame2, (xV, int(x_arr[20-count]) - 30), radius=10, color = (0, 255, 0), thickness=-1)
+            frame2 = cv2.circle(frame2, (xV, int(x_arr[steps-count]) - 30), radius=10, color = (0, 255, 0), thickness=-1)
             count = count + 1
+            arrX = np.append(arrX, int(x_arr[steps-count]))
+            arrZ = np.array(z_arr) - 150
+        thearray = [arrZ, arrX]
+        # print(thearray)
+        # Also save this array as penval.npy
+        np.save('Results', thearray)
+
     frame = copy.deepcopy(img)
 # Release the camera & destroy the windows.
 cv2.destroyAllWindows()
