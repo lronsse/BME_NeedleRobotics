@@ -375,10 +375,9 @@ class motor_controller(object):
 
             return X_perc, Y_perc, self.X_pos, self.Y_pos
 
-        """
         print('x_arr=', xR, '\n')
         print('y_arr=', yR, '\n')
-        
+
         print('R_arr_ins=', R_arr_ins, '\n')
         print('Theta_arr_ins=', theta_arr_ins, '\n')
         print('z_arr_ins=', z_arr_ins, '\n')
@@ -405,7 +404,6 @@ class motor_controller(object):
         ax.set_ylabel('$Y-as$')
         ax.set_zlabel('$Z-as$')
         ax.view_init( 20, 20)
-        """
 
     def Non_vertical_line(self, A, B, X_coord, Y_coord):
         x_arr = np.linspace(self.X_pos, X_coord, steps)  # Array with all the x positions of the needle tip
