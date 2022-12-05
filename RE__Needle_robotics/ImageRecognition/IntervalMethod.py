@@ -12,7 +12,6 @@ def draw(newX, newY, steps):
 
     X2 = newY  # End X-coordinate
     Y2 = newX  # End Y-coordinate
-    #print(X2)
 
     datasets = []  # Array of arrays containing all the x and y point for every height
     z2 = []
@@ -24,9 +23,6 @@ def draw(newX, newY, steps):
     A = (Y2 - Y1) / (X2 - X1)  # Directional coefficient of path
     B = Y1 - A * X1  # Intersection point with y-axis
 
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-
     R_arr = np.linspace(1, 120, 40)
 
     # Projection of movement space of needle tip
@@ -34,9 +30,7 @@ def draw(newX, newY, steps):
         x_cont = np.linspace(-R_arr[i], R_arr[i], 100)
         y_cont = np.sqrt(R_arr[i] ** 2 - x_cont ** 2)
         z = np.sqrt(K ** 2 - R_arr[i] ** 2)
-
         datasets.append([x_cont, y_cont, z])
-        # ax.plot(x_cont, y_cont, z, color='grey')
 
     x_arr = np.linspace(X1, X2, steps)
     y_arr = []
@@ -46,7 +40,6 @@ def draw(newX, newY, steps):
     for i in range(len(x_arr)):
         y_arr.append(A * x_arr[i] + B)
         R = np.sqrt(x_arr[i] ** 2 + y_arr[i] ** 2)
-        #print(K - R)
         z_arr.append(np.sqrt(K ** 2 - R ** 2))
 
     # Drawing the needle curve on the x-y plane from the template to the starting point
@@ -77,47 +70,26 @@ def draw(newX, newY, steps):
     yR2 = yN2 * np.cos(theta2) - xN2 * np.sin(theta2)
     xR2 = yN2 * np.sin(theta2) + xN2 * np.cos(theta2)
 
-    # Plot path of the needle tip
-    # ax.plot(x_arr, y_arr, z_arr, label='Movement path')
-
-    #print('xR=', xR)
-    #print('yR=', yR)
-    #print('zR=', zR)
-
-    # Plot the needle
-    # ax.plot(xR, yR, zR, label="Start position")
-    # ax.plot(xR2, yR2, zR2, label="End postion")
-    # ax.plot(xN, yN, zN)
-
-    # ax.axes.set_zlim3d(bottom=0, top=150)
-    # ax.axes.set_xlim3d(-50, 110)
-    # ax.axes.set_ylim3d(0, 160)
-    # ax.legend(loc='upper right')
-    # ax.set_xlabel('$X-as$')
-    # ax.set_ylabel('$Y-as$')
-    # ax.set_zlabel('$Z-as$')
-    # ax.view_init(20, 20)
-
     # projection of line on surface
     Px = np.linspace(-R, R, 50)
     Py = A * Px + B
     Pz = np.zeros(50)
-
-    plt.plot(x_arr, z_arr)
-    plt.show()
     x_arr = np.linspace(X1, X2, steps)
     return z_arr, x_arr
 
 
-coordinates = input('input x, y coordinates : ').split()
-print(coordinates)
-newX = 0
+# coordinates = input('input x, y coordinates : ').split()
+# coordinates = map(int, coordinates)
+coordinates = [0, 311, 600]
+# newX = 0
 steps = 15
-goalX, goalY = coordinates
+newX, goalX, goalY = coordinates
 # For the graph goalY is the x and goalX is the y
-z_arr, x_arr = draw(goalY, (goalX - newX), steps)
-
-curve = np.load('Results.npy')
-print(curve)
-x, y = (530, 280)
-
+x_arr, z_arr = draw(goalY, (goalX - newX), steps)
+print(z_arr, '\n', x_arr)
+#plt.plot(x_arr, z_arr)
+#plt.show()
+# curve = np.load('Results.npy')
+# print(curve)
+position = [25, 750]
+error = coordinates[1:] - position

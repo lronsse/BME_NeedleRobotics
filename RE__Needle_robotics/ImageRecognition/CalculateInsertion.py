@@ -168,6 +168,7 @@ def calculateInsertion():
         stacked = np.hstack((frame, frame2))
         cv2.imshow('Trackbars', cv2.resize(stacked, None, fx=0.8, fy=0.8))
         # cv2.imshow('Trackbars', stacked)
+        print(newX, goalX, goalY)
 
         # If the user presses ESC then exit the program
         key = cv2.waitKey(1)
@@ -199,7 +200,7 @@ def calculateInsertion():
             frame2 = cv2.circle(frame2, (goalY, goalX), radius=10, color=(0, 0, 255), thickness=-1)
             # print(thearray)
             # Also save this array as penval.npy
-            np.save('Results', thearray)
+            # np.save('Results', thearray)  #TODO: save
             cv2.destroyAllWindows()
 
         frame = copy.deepcopy(img)
