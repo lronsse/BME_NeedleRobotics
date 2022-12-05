@@ -6,13 +6,15 @@ import numpy as np
 
 cv2.namedWindow("Trackbars")
 
+
 def nothing(x):
     pass
+
 
 def showImage(image):
     img = cv2.imread(image)
     x, y, z = img.shape
-    img = cv2.resize(img, (int(y/2), int(x/2)))
+    img = cv2.resize(img, (int(y / 2), int(x / 2)))
     cv2.imshow('image', img)
     cv2.waitKey(0)
 
@@ -26,7 +28,7 @@ def main():
     cv2.createTrackbar("Insertion Point", "Trackbars", 0, y, nothing)
     cv2.imshow('Trackbars', img)
     new_val = cv2.getTrackbarPos("Insertion Point", "Trackbars")
-    #print(new_val)
+    # print(new_val)
     cv2.waitKey(0)
 
 
@@ -40,9 +42,9 @@ def draw(newX, newY, steps):
 
     X2 = newY  # End X-coordinate
     Y2 = newX  # End Y-coordinate
-    #print(X2)
+    # print(X2)
 
-    datasets = []  # Array of arrays containing all the x and y point for every height
+    datasets = []  # Array of arrays containing all the x and y point for every hight
     z2 = []
     x2 = []
     y2 = []
@@ -74,7 +76,7 @@ def draw(newX, newY, steps):
     for i in range(len(x_arr)):
         y_arr.append(A * x_arr[i] + B)
         R = np.sqrt(x_arr[i] ** 2 + y_arr[i] ** 2)
-        #print(K - R)
+        # print(K - R)
         z_arr.append(np.sqrt(K ** 2 - R ** 2))
 
     # Drawing the needle curve on the x-y plane from the template to the starting point
@@ -108,9 +110,9 @@ def draw(newX, newY, steps):
     # Plot path of the needle tip
     # ax.plot(x_arr, y_arr, z_arr, label='Movement path')
 
-    #print('xR=', xR)
-    #print('yR=', yR)
-    #print('zR=', zR)
+    # print('xR=', xR)
+    # print('yR=', yR)
+    # print('zR=', zR)
 
     # Plot the needle
     # ax.plot(xR, yR, zR, label="Start position")
@@ -131,75 +133,78 @@ def draw(newX, newY, steps):
     Py = A * Px + B
     Pz = np.zeros(50)
 
-    plt.plot(x_arr, z_arr)
-    plt.show()
+    # plt.plot(x_arr, z_arr)
+    # plt.show()
     x_arr = np.linspace(X1, X2, steps)
     return z_arr, x_arr
 
 
-img = 'BME3.jpeg'
-img2 = cv2.imread(img)
-img = cv2.imread(img)
-x, y, z = img.shape
-img = cv2.resize(img, (int(y / 2), int(x / 2)))
-x2, y2, z2 = img2.shape
-img2 = cv2.resize(img, (int(y / 2), int(x / 2)))
-x, y, z = img.shape
-arrZ = np.array([])
-arrX = np.array([])
+def calculateInsertion():
 
-cv2.createTrackbar("Insertion Point", "Trackbars", 0, x, nothing)
-cv2.createTrackbar("Goal X", "Trackbars", 0, x, nothing)
-cv2.createTrackbar("Goal Y", "Trackbars", 0, y, nothing)
+    img = 'BME3.jpeg'
+    img2 = cv2.imread(img)
+    img = cv2.imread(img)
+    x, y, z = img.shape
+    img = cv2.resize(img, (int(y / 2), int(x / 2)))
+    x2, y2, z2 = img2.shape
+    img2 = cv2.resize(img, (int(y / 2), int(x / 2)))
+    x, y, z = img.shape
+    arrZ = np.array([])
+    arrX = np.array([])
 
-while True:
+    cv2.createTrackbar("Insertion Point", "Trackbars", 0, x, nothing)
+    cv2.createTrackbar("Goal X", "Trackbars", 0, x, nothing)
+    cv2.createTrackbar("Goal Y", "Trackbars", 0, y, nothing)
+    while True:
+        # Start reading the webcam feed frame by frame.
+        frame = copy.deepcopy(img)
+        frame2 = img2
 
-    # Start reading the webcam feed frame by frame.
-    frame = copy.deepcopy(img)
-    frame2 = img2
+        newX = cv2.getTrackbarPos("Insertion Point", "Trackbars")
+        goalX = cv2.getTrackbarPos("Goal X", "Trackbars")
+        goalY = cv2.getTrackbarPos("Goal Y", "Trackbars")
+        frame = cv2.circle(frame, (0, newX), radius=10, color=(255, 0, 0), thickness=-1)
+        frame = cv2.circle(frame, (goalY, goalX), radius=10, color=(0, 0, 255), thickness=-1)
+        stacked = np.hstack((frame, frame2))
+        cv2.imshow('Trackbars', cv2.resize(stacked, None, fx=0.8, fy=0.8))
+        # cv2.imshow('Trackbars', stacked)
 
-    newX = cv2.getTrackbarPos("Insertion Point", "Trackbars")
-    goalX = cv2.getTrackbarPos("Goal X", "Trackbars")
-    goalY = cv2.getTrackbarPos("Goal Y", "Trackbars")
-    frame = cv2.circle(frame, (0, newX), radius=5, color=(255, 0, 0), thickness=-1)
-    frame = cv2.circle(frame, (goalY, goalX), radius=5, color=(0, 0, 255), thickness=-1)
-    stacked = np.hstack((frame, frame2))
-    cv2.imshow('Trackbars', cv2.resize(stacked, None, fx=0.8, fy=0.8))
+        # If the user presses ESC then exit the program
+        key = cv2.waitKey(1)
+        if key == 27:
+            break
 
-    # If the user presses ESC then exit the program
-    key = cv2.waitKey(1)
-    if key == 27:
-        break
+        # If the user presses `s` then print this array.
+        if key == ord('s'):
+            # break
+            steps = 15
+            # For the graph goalY is the x and goalX is the y
+            z_arr, x_arr = draw(goalY, (goalX - newX), steps)
+            # print(np.array(z_arr) - 150)
+            # print(x_arr)
+            # print(newX)
 
-        #print(thearray)
-        thearray = [newX,goalX, goalY]
-    if key == ord('r'):
-    # If the user presses `r` then print this array.
+            count = 1
+            for val in np.array(z_arr) - 150:
+                xV = int(val)
+                frame2 = cv2.circle(frame2, (xV, int(x_arr[steps - count]) - 30), radius=10, color=(0, 255, 0),
+                                    thickness=-1)
+                count = count + 1
+                # arrX = np.append(arrX, int(x_arr[steps-count]) - 30)
+                # arrZ = np.array(z_arr) - 150
+                arrX = np.append(arrX, int(x_arr[steps - count]) - 30)
+                arrZ = np.append(arrZ, xV)
+            thearray = [arrZ, arrX]
+            frame2 = cv2.circle(frame2, (0, newX), radius=10, color=(255, 0, 0), thickness=-1)
+            frame2 = cv2.circle(frame2, (goalY, goalX), radius=10, color=(0, 0, 255), thickness=-1)
+            # print(thearray)
+            # Also save this array as penval.npy
+            np.save('Results', thearray)
+            cv2.destroyAllWindows()
 
-        # Also save this array as penval.npy
-        np.save('Results', thearray)
-    # If the user presses `s` then print this array.
-    if key == ord('s'):
-        #break
-        steps = 15
-        # For the graph goalY is the x and goalX is the y
-        z_arr, x_arr = draw(goalY, (goalX - newX), steps)
-        #print(np.array(z_arr) - 150)
-        #print(x_arr)
-        #print(newX)
+        frame = copy.deepcopy(img)
+    # Release the camera & destroy the windows.
+    cv2.destroyAllWindows()
 
-        count = 1
-        for val in np.array(z_arr) - 150:
-            xV = int(val)
-            frame2 = cv2.circle(frame2, (xV, int(x_arr[steps-count]) - 30), radius=10, color = (0, 255, 0), thickness=-1)
-            count = count + 1
-            arrX = np.append(arrX, int(x_arr[steps-count]))
-            arrZ = np.array(z_arr) - 150
-        thearray = [arrZ, arrX]
-        # print(thearray)
-        # Also save this array as penval.npy
-        np.save('Results', thearray)
 
-    frame = copy.deepcopy(img)
-# Release the camera & destroy the windows.
-cv2.destroyAllWindows()
+calculateInsertion()
