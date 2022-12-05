@@ -82,7 +82,7 @@ def god():
 
         X_coord, Y_coord = controller.Move_tip(arrX[step], 0)  # Todo: Movement code
         Current_X, Current_Y, X_coord, Y_coord = controller.Insert(arrZ[step])
-        
+
         # having the movement done we know that the needle is where it 'should' be,
         # so we can take an image capture here and use that as the actual needle posiiton
         img_resp = requests.get(url)
