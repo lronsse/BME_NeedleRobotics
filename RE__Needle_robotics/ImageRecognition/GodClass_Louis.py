@@ -16,6 +16,9 @@ cap.set(3, 1280)
 cap.set(4, 720)
 url = "http://145.94.151.26:8080/shot.jpg"
 
+frame_z = 150
+frame_x = 90
+
 def needleTip(image):
     #blur the image
     image2 = cv2.GaussianBlur(image, (5, 5), 0)
@@ -72,9 +75,14 @@ def god():
     # print(arrX)
 
     for step in range(0, len(arrZ)):
-        frame.size() # Conversion from pixels to metric
+        controller.Home()
 
-        X_coord, Y_coord = controller.move_tip(arrX[step], 0)                          # Todo: Movement code
+        arrZ = arrZ / 1280 * frame_z  # Conversion from pixel value to metric [mm]
+        arrX = arrX / 720 * frame_x   # 720 and 1280 are image sizes
+
+        X_coord, Y_coord = controller.Move_tip(arrX[step], 0)  # Todo: Movement code
+        Current_X, Current_Y, X_coord, Y_coord = controller.Insert(arrZ[step])
+        
         # having the movement done we know that the needle is where it 'should' be,
         # so we can take an image capture here and use that as the actual needle posiiton
         img_resp = requests.get(url)
