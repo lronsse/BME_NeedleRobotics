@@ -4,7 +4,6 @@ import copy
 import matplotlib.pyplot as plt
 import numpy as np
 
-cv2.namedWindow("Trackbars")
 
 
 def nothing(x):
@@ -139,11 +138,15 @@ def draw(newX, newY, steps):
     return z_arr, x_arr
 
 
-def calculateInsertion():
+def calculateInsertion(fileName, frame):
+
+    cv2.namedWindow("Trackbars")
 
     img = 'BME3.jpeg'
     img2 = cv2.imread(img)
+    img2 = copy.deepcopy(frame)
     img = cv2.imread(img)
+    img = copy.deepcopy(frame)
     x, y, z = img.shape
     img = cv2.resize(img, (int(y / 2), int(x / 2)))
     x2, y2, z2 = img2.shape
@@ -152,15 +155,16 @@ def calculateInsertion():
     arrZ = np.array([])
     arrX = np.array([])
 
-    cv2.createTrackbar("Insertion Point", "Trackbars", 0, x, nothing)
+    cv2.createTrackbar("Ip", "Trackbars", 0, x, nothing)
     cv2.createTrackbar("Goal X", "Trackbars", 0, x, nothing)
     cv2.createTrackbar("Goal Y", "Trackbars", 0, y, nothing)
     while True:
+
         # Start reading the webcam feed frame by frame.
         frame = copy.deepcopy(img)
         frame2 = img2
 
-        newX = cv2.getTrackbarPos("Insertion Point", "Trackbars")
+        newX = cv2.getTrackbarPos("Ip", "Trackbars")
         goalX = cv2.getTrackbarPos("Goal X", "Trackbars")
         goalY = cv2.getTrackbarPos("Goal Y", "Trackbars")
         frame = cv2.circle(frame, (0, newX), radius=10, color=(255, 0, 0), thickness=-1)
@@ -168,7 +172,6 @@ def calculateInsertion():
         stacked = np.hstack((frame, frame2))
         cv2.imshow('Trackbars', cv2.resize(stacked, None, fx=0.8, fy=0.8))
         # cv2.imshow('Trackbars', stacked)
-        print(newX, goalX, goalY)
 
         # If the user presses ESC then exit the program
         key = cv2.waitKey(1)
@@ -200,12 +203,14 @@ def calculateInsertion():
             frame2 = cv2.circle(frame2, (goalY, goalX), radius=10, color=(0, 0, 255), thickness=-1)
             # print(thearray)
             # Also save this array as penval.npy
-            # np.save('Results', thearray)  #TODO: save
+            np.save(fileName, thearray)
+
             cv2.destroyAllWindows()
+            break
 
         frame = copy.deepcopy(img)
     # Release the camera & destroy the windows.
     cv2.destroyAllWindows()
 
 
-calculateInsertion()
+#calculateInsertion()
