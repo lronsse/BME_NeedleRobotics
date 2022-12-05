@@ -10,6 +10,44 @@ This part will take in the camera shot and segment it into looking at only the a
 which will be marked with bright yellow tape.
 """
 
+def segmentImg2(image):
+    #blur the image
+    image2 = cv2.GaussianBlur(image, (5, 5), 0)
+
+    hsvPlate = cv2.cvtColor(image2, cv2.COLOR_BGR2HSV)
+    grayPlate = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+    colorMin = np.array([15, 185, 0])
+    colorMax = np.array([35, 255, 255])
+    holdImg = copy.deepcopy(image)
+    mask = cv2.inRange(hsvPlate, colorMin, colorMax)
+    segPlate = cv2.bitwise_and(holdImg, holdImg, mask=mask)
+
+    element = cv2.getStructuringElement(cv2.MORPH_RECT, (6, 6))
+    element_circle = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (10, 10))
+    element3 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))
+    segPlate = cv2.erode(segPlate, element)
+    segPlate = cv2.dilate(segPlate, element)
+
+    gray = cv2.cvtColor(segPlate, cv2.COLOR_RGB2GRAY)
+    x = np.sum(gray, axis=0)
+    x2 = np.nonzero(x)
+    y = np.sum(gray, axis=1)
+    y2 = np.nonzero(y)
+    y3 = y2[0][int((len(y2[0]) - 1) / 2)]
+    x3 = x2[0][int((len(x2[0]) - 1) / 2)]
+
+    element2 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+    crop = cv2.erode(image, element2)
+    crop = cv2.dilate(crop, element2)
+    crop = crop[y2[0][0]:y2[0][-1], x2[0][0]:x2[0][-1], :]
+    coord = [y2[0][0], y2[0][-1], x2[0][0], x2[0][-1]]
+
+    image = cv2.circle(image, (x3, y3), radius=100, color=(255, 0, 0), thickness=1)
+    #cv2.imshow('Cropped', crop)
+    #cv2.waitKey(0)
+
+    return segPlate
 
 def segmentImg(image):
     #blur the image
@@ -101,7 +139,7 @@ def findOffset(imageName):
     cv2.imshow('original', img)
     cv2.waitKey(0)
 
-    segmented, coords = segmentImg(img)
+    segmented, x, y = segmentImg(img)
 
     #get demensions of segmented image
     #xs, ys, zs = segmented.shape
@@ -123,6 +161,4 @@ def getFrame(img):
 #findOffset('BME.png')
 #findOffset('BME2.png')
 #findOffset('BME3.jpeg')
-data = np.load('Results.npy')
-print(data)
 
