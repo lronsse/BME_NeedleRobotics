@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
+from pySerialTransfer import pySerialTransfer as txfer
 
 
 def draw(newX, newY, steps):
@@ -77,6 +79,112 @@ def draw(newX, newY, steps):
     x_arr = np.linspace(X1, X2, steps)
     return z_arr, x_arr
 
+def open_ser_com():
+    try:
+        link = txfer.SerialTransfer('COM8')
+
+        link.open()
+        time.sleep(2)  # allow some time for the Arduino to completely reset
+        print('link = open')
+
+        return link
+
+    except:
+        import traceback
+        traceback.print_exc()
+
+        try:
+            link.close()
+
+        except:
+            pass
+
+def send_arr(link, step_count_M1, step_count_M2, step_count_M3):
+    list_of_lists = [step_count_M1, step_count_M2, step_count_M3]
+
+    length = len(list_of_lists)
+
+    for i in range(length):
+        send_size = 0
+
+        ###################################################################
+        # Send lists
+        ###################################################################
+
+        list_ = list_of_lists[i]
+
+        list_size = link.tx_obj(list_)
+        send_size += list_size
+
+        ###################################################################
+        # Transmit all the data to send in a single packet
+        ###################################################################
+        link.send(send_size)
+
+        ###################################################################
+        # Wait for a response and report any errors while receiving packets
+        ###################################################################
+        while not link.available():
+            if link.status < 0:
+                if link.status == txfer.CRC_ERROR:
+                    print('ERROR: CRC_ERROR')
+                elif link.status == txfer.PAYLOAD_ERROR:
+                    print('ERROR: PAYLOAD_ERROR')
+                elif link.status == txfer.STOP_BYTE_ERROR:
+                    print('ERROR: STOP_BYTE_ERROR')
+                else:
+                    print('ERROR: {}'.format(link.status))
+
+        ###################################################################
+        # Parse response list
+        ###################################################################
+        rec_list = link.rx_obj(obj_type=type(list_),
+                               obj_byte_size=list_size,
+                               list_format='i')
+        """"       
+        rec_list_M2  = link.rx_obj(obj_type=type(list_M2),
+                                         obj_byte_size=list_size_M2,
+                                         list_format='i')
+
+        rec_list_M4  = link.rx_obj(obj_type=type(list_M4),
+                                         obj_byte_size=list_size_M4,
+                                         list_format='i')
+
+        """
+
+        ###################################################################
+        # Display the received data
+        ###################################################################
+        # print('SENT: {}'.format(list_))
+        # print('RCVD: {}'.format(rec_list))
+        # print(' ')
+
+link = open_ser_com()
+
+
+# Variable set up
+I = 20  # The centre of the circle measured from the template
+K_0 = 171
+D_max = 100  # Maximum deflection
+
+C1 = 3200  # 1/16 step mode
+C2 = 3200  # 1/16 step mode
+C3 = 3200  # 1/16 step mode
+
+datasets = []  # Array of arrays containing all the x and y point for every hight
+z2 = []
+x2 = []
+y2 = []
+
+steps = 30  # Determines the precision of the movement
+straight = 50  # Point where maximum deflection is no longer determined by mechanical limit
+
+corner = np.arctan(D_max / straight)
+
+
+
+
+
 
 # coordinates = input('input x, y coordinates : ').split()
 # coordinates = map(int, coordinates)
@@ -87,9 +195,3 @@ newX, goalX, goalY = coordinates
 # For the graph goalY is the x and goalX is the y
 x_arr, z_arr = draw(goalY, (goalX - newX), steps)
 print(z_arr, '\n', x_arr)
-#plt.plot(x_arr, z_arr)
-#plt.show()
-# curve = np.load('Results.npy')
-# print(curve)
-position = [25, 750]
-error = coordinates[1:] - position
