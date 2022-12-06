@@ -132,11 +132,14 @@ class motor_controller(object):
     def close_connection(self):
         link.close()
 
+    def get_link(self):
+        return link
+
     def Home(self):
         print('starting homing')
-        step_count_M1 = [28282, 2600]  # Z direction.
-        step_count_M2 = [28282, -2300]  # [28282, -2195]
-        step_count_M3 = [28282, 9570]  # translation gotta fix from 9570
+        step_count_M1 = [28282, 2600]  # TODO: [28282, 2600]  # Z direction.
+        step_count_M2 = [28282, -2195]  # TODO: [28282, -2300]  # [28282, -2195]
+        step_count_M3 = [28282, 9500]  # TODO: [28282, 9500]  # translation gotta fix from 9570
 
         self.K_pos = K_0  # Radius of circle
         self.Z_pos = K_0

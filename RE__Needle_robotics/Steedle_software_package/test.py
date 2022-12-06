@@ -1,5 +1,6 @@
 #import Steedle_sercom
 from Motor_controller import motor_controller
+from pySerialTransfer import pySerialTransfer as txfer
 
 Controller = motor_controller()
 
@@ -81,15 +82,16 @@ def send_arr(link, step_count_M1, step_count_M2, step_count_M3):
 xV = 0
 yV = 0
 zV = 0
+# link = Controller.Home()
+link = Controller.get_link()
+print('We have the link')
 
-print('Homing')
-link = Controller.Home()
-print('We have homed')
-
-M1 = [28282, 2600]
-M2 = [28282, -2300]
-M3 = [28282, 9570]
-
+M1 = [0, 0]  # M1 = [28282, 2600]
+M2 = [1000, 0]  # M2 = [28282, -2195]
+M3 = [0, 0]  # M3 = [28282, 9570]
+send_arr(link, M1, M2, M3)
+print("array sent")
+'''
 while True:
     val = input('what value do you wish to change : ')
     if val == 'xy':
@@ -112,7 +114,7 @@ while True:
             c = input('key : ')
             if c == '1':
                 M2[1] += 10
-                send_arr(link, M1, M2, M3)
+                send_arr(link, [0, 0], M2, [0, 0])
                 print(M2)
             if c == '2':
                 M2[1] -= 10
@@ -120,3 +122,4 @@ while True:
                 print(M2)
             else:
                 break
+'''
