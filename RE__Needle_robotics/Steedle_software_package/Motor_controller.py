@@ -135,7 +135,7 @@ class motor_controller(object):
     def Home(self):
         print('starting homing')
         step_count_M1 = [28282, 2600]  # Z direction.
-        step_count_M2 = [28282, -2195]
+        step_count_M2 = [28282, -2300]  # [28282, -2195]
         step_count_M3 = [28282, 9570]  # translation gotta fix from 9570
 
         self.K_pos = K_0  # Radius of circle
