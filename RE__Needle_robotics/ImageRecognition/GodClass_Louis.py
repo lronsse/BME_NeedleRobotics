@@ -7,20 +7,20 @@ import matplotlib.pyplot
 from img2 import segmentImg2
 from matplotlib import pyplot as plt
 from Motor_controller import motor_controller
+from CalculateInsertion import calculateInsertion
 
 controller = motor_controller()
-from CalculateInsertion import calculateInsertion
 
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
-url = "http://145.94.151.26:8080/shot.jpg"
+url = "http://145.94.151.26:8080/shot.jpg"  # live phone streaming link
 
-frame_z = 150
-frame_x = 90
+frame_conversion = 150 / 1280  # pixel to mm # TODO: Should be converted properly with cropped frame
+
 
 def needleTip(image):
-    #blur the image
+    # blur the image
     image2 = cv2.GaussianBlur(image, (5, 5), 0)
 
     hsvPlate = cv2.cvtColor(image2, cv2.COLOR_BGR2HSV)
@@ -42,8 +42,8 @@ def needleTip(image):
 
     return segPlate
 
-def god():
 
+def god():
     # img_resp = requests.get(url)
     # img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
     # frame = cv2.imdecode(img_arr, -1)
@@ -64,6 +64,7 @@ def god():
     data = np.load('{}.npy'.format(fileName))
     arrX = data[0]
     arrZ = data[1]
+
     def fixArrZ(arrZ):
         arr = copy.deepcopy(arrZ)
         placeholder = arr[-1]
@@ -71,14 +72,15 @@ def god():
             arr[i] = arrZ[i - 1]
         arr[0] = placeholder
         return arr
+
     arrZ = fixArrZ(arrZ)
     # print(arrX)
 
     for step in range(0, len(arrZ)):
         controller.Home()
 
-        arrZ = arrZ / 1280 * frame_z  # Conversion from pixel value to metric [mm]
-        arrX = arrX / 720 * frame_x   # 720 and 1280 are image sizes
+        arrZ = arrZ * frame_conversion  # Conversion from pixel value to metric [mm]
+        arrX = arrX * frame_conversion  # 720 and 1280 are image sizes
 
         X_coord, Y_coord = controller.Move_tip(arrX[step], 0)  # Todo: Movement code
         Current_X, Current_Y, X_coord, Y_coord = controller.Insert(arrZ[step])
@@ -89,9 +91,9 @@ def god():
         img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
         image = cv2.imdecode(img_arr, -1)
         # Now having the image taken, we can do a mask to find the needle tip since its a unique color we chose
-        #img = needleTip(img)
+        # img = needleTip(img)
         # For now we use this for debugging purposes
-        img= segmentImg2(image)
+        img = segmentImg2(image)
 
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
@@ -104,22 +106,27 @@ def god():
 
         cnts = imutils.grab_contours(cnts)
         cX = 0
-        cY = 0
+        cZ = 0
         count = 0
         for c in cnts:
             # compute the center of the contour
             M = cv2.moments(c)
             cX = int(M["m10"] / M["m00"]) + cX
-            cY = int(M["m01"] / M["m00"]) + cY
+            cZ = int(M["m01"] / M["m00"]) + cZ
             count = count + 1
 
-        #Actual co-ordiantes
-        cX = int(cX/count)
-        cY = int(cY / count)
-
+        # Actual coordinates of tip of needle
+        cX = int(cX / count)
+        cZ = int(cZ / count)
 
         # TODO: compute error
-        # TODO: error correction
-        
-god()
+        eX = np.abs(cX - arrX[step])  # distance error between actual and theoretical tip position
+        eZ = np.abs(cZ - arrZ[step])
 
+        e_tot = np.sqrt(eX ** 2 + eZ ** 2)
+        e_lim = 10  # maximum error in [mm]
+        # if e_tot <= e_lim / frame_conversion:
+            # TODO: Insert error correction function
+
+
+god()
