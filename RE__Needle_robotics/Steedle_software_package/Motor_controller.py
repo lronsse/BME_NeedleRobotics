@@ -137,9 +137,9 @@ class motor_controller(object):
 
     def Home(self):
         print('starting homing')
-        step_count_M1 = [28282, 2600]  # TODO: [28282, 2600]  # Z direction.
-        step_count_M2 = [28282, -2195]  # TODO: [28282, -2300]  # [28282, -2195]
-        step_count_M3 = [28282, 9500]  # TODO: [28282, 9500]  # translation gotta fix from 9570
+        step_count_M1 = [28282, 3500]  # TODO: [28282, 2600]  # Z direction.
+        step_count_M2 = [28282, -2295]  # TODO: [28282, -2300]  # [28282, -2195]
+        step_count_M3 = [28282, 9630]  # TODO: [28282, 9500]  # translation gotta fix from 9570
 
         self.K_pos = K_0  # Radius of circle
         self.Z_pos = K_0
@@ -262,7 +262,7 @@ class motor_controller(object):
         self.Y_pos = Y_coord
         self.Z_pos = z_arr[steps - 1]
 
-        return X_coord, Y_coord
+        return X_coord, Y_coord, X_coord, Y_coord
 
     def Insert(self, depth):
         R_start = np.sqrt(self.X_pos ** 2 + self.Y_pos ** 2)
