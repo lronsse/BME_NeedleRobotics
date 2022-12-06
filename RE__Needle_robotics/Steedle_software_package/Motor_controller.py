@@ -147,6 +147,7 @@ class motor_controller(object):
 
         send_arr(link, step_count_M1, step_count_M2, step_count_M3)
         print('done homing, array sent')
+        return link
 
     def Move_tip(self, X, Y):
         if self.K_pos > np.sqrt(D_max ** 2 + straight ** 2):
