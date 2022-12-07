@@ -12,8 +12,8 @@ def run():
     x, y = Controller.Move_tip(10, 10)
 
 def moveXY(x, y):
-    x, y, xC, yC = Controller.Move_tip(x, y)
-    return x, y, xC, yC
+    x, y = Controller.Move_tip(x, y)
+    return x, y
 
 def moveZ(z):
     Current_X, Current_Y, X_coord, Y_coord = Controller.Insert(z)
@@ -92,15 +92,15 @@ M3 = [0, 0]  # M3 = [28282, 9690]
 send_arr(link, M1, M2, M3)
 print("array sent")
 
+#Controller.getShit()
+
 while True:
     val = input('what value do you wish to change : ')
     if val == 'xy':
         x, y = input(f'Enter x and y coordinate : ').split()
         x, y = int(x), int(y)
-        xV += x
-        yV += y
-        x, y, xC, yC = moveXY(x, y)
-        print(f'Tip moved x by {xC} and y by {yC}')
+        x, y = moveXY(x, y)
+        print(f'Tip moved x by {x} and y by {y}')
         print('')
     if val == 'z':
         z = int(input(f'Enter z coordinate : '))

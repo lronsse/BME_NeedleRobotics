@@ -465,8 +465,8 @@ class Ui_MainWindow(object):
         R_targ = 362                 #Radius of circle in pixels
         x_widg = x - 1297
         y_widg = 543 - y
-        x_Le = int(100 -((R_targ - x_widg)/R_targ)*100)
-        y_Le = int(100 -((R_targ - y_widg)/R_targ)*100)
+        x_Le = int(100 - ((R_targ - x_widg)/R_targ)*100)
+        y_Le = int(100 - ((R_targ - y_widg)/R_targ)*100)
        
         self.Needle_pos.setObjectName("Needle_pos")
         self.X_pos_LE.setText('{}'.format(x_Le))
