@@ -15,7 +15,7 @@ import numpy as np
 
 def open_ser_com():
     try:
-        link = txfer.SerialTransfer('COM8')
+        link = txfer.SerialTransfer('COM7')
 
         link.open()
         time.sleep(2)  # allow some time for the Arduino to completely reset
@@ -80,11 +80,11 @@ def send_arr(link, step_count_M1, step_count_M2, step_count_M3):
         rec_list_M2  = link.rx_obj(obj_type=type(list_M2),
                                          obj_byte_size=list_size_M2,
                                          list_format='i')
-                
+
         rec_list_M4  = link.rx_obj(obj_type=type(list_M4),
                                          obj_byte_size=list_size_M4,
                                          list_format='i')
-        
+
         """
 
         ###################################################################
@@ -132,11 +132,14 @@ class motor_controller(object):
     def close_connection(self):
         link.close()
 
+    def get_link(self):
+        return link
+
     def Home(self):
         print('starting homing')
-        step_count_M1 = [28282, 2600]
-        step_count_M2 = [28282, -2195]
-        step_count_M3 = [28282, 9570]
+        step_count_M1 = [28282, 3500]  # TODO: [28282, 2600]  # Z direction.
+        step_count_M2 = [28282, -2295]  # TODO: [28282, -2300]  # Rotation
+        step_count_M3 = [28282, 9690]  # TODO: [28282, 9500]  # Translation
 
         self.K_pos = K_0  # Radius of circle
         self.Z_pos = K_0
@@ -146,19 +149,29 @@ class motor_controller(object):
         self.round_counter = 0
 
         send_arr(link, step_count_M1, step_count_M2, step_count_M3)
-        print('done homing, array sent')
 
     def Move_tip(self, X, Y):
+        R_maxD = 0
+
         if self.K_pos > np.sqrt(D_max ** 2 + straight ** 2):
             R_max = D_max
+            R_maxD = 100 - R_max
+            # print('printing', np.sqrt(D_max ** 2 + straight ** 2), '\n', self.K_pos)
+            # maxima_z = -1 * (self.K_pos - I) / (-I + K_0) / -D_max)  # Line representing the maximum deflection at every z value
+            # print(f'the maxima at each Z are {maxima_z} Version 1')
         else:
-            # R_max = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
+            # maxima_z = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
+            # print(f'the maxima at each Z are {maxima_z}')
             R_max = np.sin(corner) * self.K_pos
+            R_maxD = np.sin(corner) * (K_0 - self.K_pos)
 
         X_coord = 0.01 * X * R_max
         Y_coord = 0.01 * Y * R_max
+        X_coordD = 0.01 * X * R_maxD
+        Y_coordD = 0.01 * Y * R_maxD
 
         print('X_coord, Y_coord', X_coord, Y_coord, self.K_pos)
+        print('X_coordD, Y_coordD', X_coordD, Y_coordD, self.K_pos)
 
         if X_coord != 0:  # Check if x is 0
             theta_end = np.arctan(Y_coord / X_coord)
@@ -198,11 +211,11 @@ class motor_controller(object):
         theta_steps = []
         R_steps = []
 
-        print('x_arr=', x_arr, '\n')
+        '''print('x_arr=', x_arr, '\n')
         print('y_arr=', y_arr, '\n')
         print('R_arr=', R_arr, '\n')
         print('Theta_arr=', theta_arr, '\n')
-        print('z_arr=', z_arr, '\n')
+        print('z_arr=', z_arr, '\n')'''
 
         # Convert positions of needle tip path to Motor positions
         for i in range(steps):
@@ -217,17 +230,17 @@ class motor_controller(object):
 
         send_arr(link, step_count_M1, step_count_M2, step_count_M3)
 
-
+        """
         ar = np.linspace(1,120, 40)
-        
+
         #Projection of movement space of needle tip
         for i in range(len(ar)):
             x_cont = np.linspace( -ar[i], ar[i], 100)       
             y_cont = np.sqrt(ar[i]**2 - x_cont**2)
             z = np.sqrt(self.K_pos**2 - ar[i]**2)
-            
+
             ax.plot( x_cont, y_cont, z, color='grey')
-        
+
         ax.plot( x_arr, y_arr, z_arr, label='Movement path')
         #ax.axes.set_xlim3d(0, 150)
         #ax.axes.set_ylim3d(0, 150)
@@ -237,21 +250,21 @@ class motor_controller(object):
         ax.set_ylabel('$Y-as$')
         ax.set_zlabel('$Z-as$')
         ax.view_init( 90, -90)
-             
+
         print('x_arr=', x_arr, '\n')
         print('y_arr=', y_arr, '\n')
         print('R_arr=', R_arr, '\n')
         print('Theta_arr=', theta_arr, '\n')
         print('z_arr=', z_arr, '\n')
-        
+
         #print('Z_steps=', Z_steps, '\n')
         #print('Theta_steps=', theta_steps, '\n')
         #print('R_steps=', R_steps, '\n')
-        
+
         print('M1_arr=', step_count_M1, '\n')
         print('M2_arr=', step_count_M2, '\n')
         print('M3_arr=', step_count_M3, '\n')
-
+        """
 
         # Update position
         self.X_pos = X_coord
@@ -368,24 +381,25 @@ class motor_controller(object):
             X_perc = int(round(self.X_pos / Current_Rmax * 100))
             Y_perc = int(round(self.Y_pos / Current_Rmax * 100))
 
-            print('R_max', Current_Rmax)
+            '''print('R_max', Current_Rmax)
             print('x_arr=', xR, '\n')
             print('y_arr=', yR, '\n')
-            print('z_arr=', zR, '\n')
+            print('z_arr=', zR, '\n')'''
 
             return X_perc, Y_perc, self.X_pos, self.Y_pos
 
+        """
         print('x_arr=', xR, '\n')
         print('y_arr=', yR, '\n')
 
         print('R_arr_ins=', R_arr_ins, '\n')
         print('Theta_arr_ins=', theta_arr_ins, '\n')
         print('z_arr_ins=', z_arr_ins, '\n')
-        
-        
+
+
         #Plot the needle
         ax.plot(xR, yR, zR, label="Insertion path")
-        
+
         R_arr = np.linspace(1,120, 40)
 
         #Projection of movement space of needle tip
@@ -393,9 +407,9 @@ class motor_controller(object):
             x_cont = np.linspace( -R_arr[i], R_arr[i], 100)       
             y_cont = np.sqrt(R_arr[i]**2 - x_cont**2)
             z = np.sqrt(self.K_pos**2 - R_arr[i]**2)
-            
+
             ax.plot( x_cont, y_cont, z, color='grey')
-        
+
         ax.axes.set_xlim3d(0, 150)
         ax.axes.set_ylim3d(0, 150)
         ax.axes.set_zlim3d(0, 150)
@@ -404,6 +418,7 @@ class motor_controller(object):
         ax.set_ylabel('$Y-as$')
         ax.set_zlabel('$Z-as$')
         ax.view_init( 20, 20)
+        """
 
     def Non_vertical_line(self, A, B, X_coord, Y_coord):
         x_arr = np.linspace(self.X_pos, X_coord, steps)  # Array with all the x positions of the needle tip
@@ -473,3 +488,126 @@ class motor_controller(object):
                     theta_arr.append(self.theta)
 
         return x_arr, y_arr, z_arr, R_arr, theta_arr
+
+    def getShit(self):
+        for i in range(0, 1000):
+            depth = i
+            R_start = np.sqrt(self.X_pos ** 2 + self.Y_pos ** 2)
+            Z_start = np.sqrt(self.K_pos ** 2 - R_start ** 2)
+            Q = Z_start
+
+            if self.X_pos != 0:  # Check if x is 0
+                theta = np.arctan(self.Y_pos / self.X_pos)
+                if self.X_pos < 0:  # Check if tip is in second or third quadrant
+                    theta = np.pi + theta
+                elif self.Y_pos < 0 and theta < 0:  # Check if tip is in fourth quadrant
+                    theta = 2 * np.pi + theta
+                else:
+                    theta = self.theta
+
+            else:
+                if self.Y_pos > 0:
+                    theta = 0.5 * np.pi
+                elif self.Y_pos < 0:
+                    theta = 1.5 * np.pi
+                else:
+                    theta = self.theta
+
+            zN = np.linspace(Z_start - depth, Z_start, steps)
+            yN = R_start / (Q ** 2) * zN ** 2  # Re_arr
+            xN = np.zeros(steps)
+
+            # Rotating the needle curve in the right configuration in 3 dimensional space
+            zR = zN
+            xR = yN * np.cos(theta) - xN * np.sin(theta)
+            yR = yN * np.sin(theta) + xN * np.cos(theta)
+
+            z_arr_ins = []  # Array with all the z positions of the needle tip
+            R_arr_ins = []  # Array of all radi
+            theta_arr_ins = []  # Array of all the theta angles
+
+            # Calculating the motor positions
+            # zR is given from the end of the insertion to the begining
+            # Therefore this array needs to be flipped so that it start at the beginning
+
+            for i in range(len(zR)):
+                z_arr_ins.append(zR[len(zR) - i - 1])
+                R_arr_ins.append(np.sqrt(xR[len(zR) - i - 1] ** 2 + yR[len(zR) - i - 1] ** 2))
+
+                if xR[len(zR) - i - 1] == 0:
+                    theta_arr_ins.append(0)
+                else:
+                    theta_arr_ins.append(np.arctan(yR[len(zR) - i - 1] / xR[len(zR) - i - 1]))
+
+            step_count_M1 = []
+            step_count_M2 = []
+            step_count_M3 = []
+
+            Z_steps = []
+            theta_steps = []
+            R_steps = []
+
+            # Check if the insertion doesn't cause to much bending:
+            Check_K = np.sqrt(zR[0] ** 2 + (xR[0] ** 2 + yR[0] ** 2))
+            if Check_K > np.sqrt(D_max ** 2 + straight ** 2):
+                Current_Rmax = D_max
+            else:
+                Current_Rmax = np.sin(corner) * Check_K
+
+            X_perc = int(round(xR[0] / Current_Rmax * 100))
+            Y_perc = int(round(yR[0] / Current_Rmax * 100))
+
+            if X_perc > 100 or Y_perc > 100:
+                return 'To much', 'To much', 'To much', 'To much'
+
+            else:
+                """
+                #Convert positions of needle tip path to Motor positions
+                for i in range(len(zR) - 1):
+                    step_count_M1.append(int(round((z_arr_ins[i+1] - z_arr_ins[i])/(32/C3))))          
+                    step_count_M2.append(int(round(-1*(theta_arr_ins[i+1] - theta_arr_ins[i])/((2*np.pi/C2)*(16/100)))))
+                    step_count_M3.append(int(round(-1*(R_arr_ins[i+1] - R_arr_ins[i])/(32/C1))))
+                """
+                # Convert positions of needle tip path to Motor positions
+                for i in range(steps):
+                    Z_steps.append(int(round((z_arr_ins[i] - z_arr_ins[0]) / (32 / C1))))
+                    theta_steps.append(
+                        int(round(-1 * (theta_arr_ins[i] - theta_arr_ins[0]) / ((2 * np.pi / C2) * (16 / 100)))))
+                    R_steps.append(int(round(-1 * (R_arr_ins[i] - R_arr_ins[0]) / (32 / C3))))
+
+                    if i > 0:
+                        step_count_M1.append(-1 * (Z_steps[i] - Z_steps[i - 1]))
+                        step_count_M2.append(theta_steps[i] - theta_steps[i - 1])
+                        step_count_M3.append(R_steps[i] - R_steps[i - 1])
+
+                # send_arr(link, step_count_M1, step_count_M2, step_count_M3)
+
+                # Update position
+                self.X_pos = xR[0]
+                self.Y_pos = yR[0]
+                self.Z_pos = zR[0]
+                self.K_pos = np.sqrt(self.Z_pos ** 2 + (self.X_pos ** 2 + self.Y_pos ** 2))
+                print(f'print depth is {depth} and the k pos is {self.K_pos}')
+                # Update bending percentages
+                if self.K_pos > np.sqrt(D_max ** 2 + straight ** 2):
+                    Current_Rmax = D_max
+                else:
+                    # Current_Rmax = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
+                    # Current_Rmax = D_max/straight *self.K_pos
+                    Current_Rmax = np.sin(corner) * self.K_pos
+
+                X_perc = int(round(self.X_pos / Current_Rmax * 100))
+                Y_perc = int(round(self.Y_pos / Current_Rmax * 100))
+
+
+
+
+
+
+
+
+
+
+
+
+

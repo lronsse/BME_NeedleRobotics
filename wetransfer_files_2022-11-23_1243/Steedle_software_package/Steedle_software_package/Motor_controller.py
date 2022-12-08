@@ -14,7 +14,7 @@ import numpy as np
 
 def open_ser_com():
         try:
-            link = txfer.SerialTransfer('COM10')
+            link = txfer.SerialTransfer('COM7')
             
             link.open()
             time.sleep(2) # allow some time for the Arduino to completely reset
