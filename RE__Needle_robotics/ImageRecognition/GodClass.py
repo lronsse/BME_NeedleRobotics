@@ -79,7 +79,7 @@ def god():
         # Now having the image taken, we can do a mask to find the needle tip since its a unique color we chose
         #img = needleTip(img)
         # For now we use this for debugging purposes
-        img= segmentImg2(image)
+        img = segmentImg2(image)
 
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(img_gray, 150, 255, cv2.THRESH_BINARY)
