@@ -156,12 +156,12 @@ class motor_controller(object):
         if self.K_pos > np.sqrt(D_max ** 2 + straight ** 2):
             R_max = D_max
             R_maxD = 100 - R_max
-            #print('printing', np.sqrt(D_max ** 2 + straight ** 2), '\n', self.K_pos)
-            #maxima_z = -1 * (self.K_pos - I) / (-I + K_0) / -D_max)  # Line representing the maximum deflection at every z value
-            #print(f'the maxima at each Z are {maxima_z} Version 1')
+            # print('printing', np.sqrt(D_max ** 2 + straight ** 2), '\n', self.K_pos)
+            # maxima_z = -1 * (self.K_pos - I) / (-I + K_0) / -D_max)  # Line representing the maximum deflection at every z value
+            # print(f'the maxima at each Z are {maxima_z} Version 1')
         else:
-            #maxima_z = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
-            #print(f'the maxima at each Z are {maxima_z}')
+            # maxima_z = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
+            # print(f'the maxima at each Z are {maxima_z}')
             R_max = np.sin(corner) * self.K_pos
             R_maxD = np.sin(corner) * (K_0 - self.K_pos)
 
