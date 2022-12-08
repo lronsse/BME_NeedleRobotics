@@ -84,13 +84,11 @@ yV = 0
 zV = 0
 #link = Controller.Home()
 link = Controller.get_link()
-print('We have the link')
 
 M1 = [0, 0]  # M1 = [28282, 3500]
 M2 = [0, 0]  # M2 = [28282, -2295]
 M3 = [0, 0]  # M3 = [28282, 9690]
-send_arr(link, M1, M2, M3)
-print("array sent")
+#send_arr(link, M1, M2, M3)
 
 #Controller.getShit()
 

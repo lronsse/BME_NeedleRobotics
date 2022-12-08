@@ -155,15 +155,15 @@ class motor_controller(object):
 
         if self.K_pos > np.sqrt(D_max ** 2 + straight ** 2):
             R_max = D_max
+            R_maxD = 100 - R_max
             #print('printing', np.sqrt(D_max ** 2 + straight ** 2), '\n', self.K_pos)
-            maxima_z = -1 * (self.K_pos - I) / (
-                        (-I + K_0) / -D_max)  # Line representing the maximum deflection at every z value
-            print(f'the maxima at each Z are {maxima_z} Version 1')
+            #maxima_z = -1 * (self.K_pos - I) / (-I + K_0) / -D_max)  # Line representing the maximum deflection at every z value
+            #print(f'the maxima at each Z are {maxima_z} Version 1')
         else:
-            maxima_z = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
-            print(f'the maxima at each Z are {maxima_z}')
+            #maxima_z = -1*(self.K_pos - I)/((-I + K_0)/-D_max)    # Line representing the maximum deflection at every z value
+            #print(f'the maxima at each Z are {maxima_z}')
             R_max = np.sin(corner) * self.K_pos
-            R_maxD = np.sin(corner) * (171.0 - self.K_pos)
+            R_maxD = np.sin(corner) * (K_0 - self.K_pos)
 
         X_coord = 0.01 * X * R_max
         Y_coord = 0.01 * Y * R_max
@@ -211,11 +211,11 @@ class motor_controller(object):
         theta_steps = []
         R_steps = []
 
-        print('x_arr=', x_arr, '\n')
+        '''print('x_arr=', x_arr, '\n')
         print('y_arr=', y_arr, '\n')
         print('R_arr=', R_arr, '\n')
         print('Theta_arr=', theta_arr, '\n')
-        print('z_arr=', z_arr, '\n')
+        print('z_arr=', z_arr, '\n')'''
 
         # Convert positions of needle tip path to Motor positions
         for i in range(steps):
@@ -381,10 +381,10 @@ class motor_controller(object):
             X_perc = int(round(self.X_pos / Current_Rmax * 100))
             Y_perc = int(round(self.Y_pos / Current_Rmax * 100))
 
-            print('R_max', Current_Rmax)
+            '''print('R_max', Current_Rmax)
             print('x_arr=', xR, '\n')
             print('y_arr=', yR, '\n')
-            print('z_arr=', zR, '\n')
+            print('z_arr=', zR, '\n')'''
 
             return X_perc, Y_perc, self.X_pos, self.Y_pos
 
