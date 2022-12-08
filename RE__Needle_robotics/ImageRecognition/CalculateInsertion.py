@@ -191,12 +191,12 @@ def calculateInsertion(fileName, frame):
             count = 1
             for val in np.array(z_arr) - 150:
                 xV = int(val)
-                frame2 = cv2.circle(frame2, (xV, int(x_arr[steps - count]) - 30), radius=10, color=(0, 255, 0),
+                frame2 = cv2.circle(frame2, (xV, int(x_arr[steps - count]) - 30 +  newX), radius=10, color=(0, 255, 0),
                                     thickness=-1)
                 count = count + 1
                 # arrX = np.append(arrX, int(x_arr[steps-count]) - 30)
                 # arrZ = np.array(z_arr) - 150
-                arrX = np.append(arrX, int(x_arr[steps - count]) - 30)
+                arrX = np.append(arrX, int(x_arr[steps - count]) - 30 + newX)
                 arrZ = np.append(arrZ, xV)
             thearray = [arrZ, arrX]
             frame2 = cv2.circle(frame2, (0, newX), radius=10, color=(255, 0, 0), thickness=-1)
@@ -204,7 +204,7 @@ def calculateInsertion(fileName, frame):
             # print(thearray)
             # Also save this array as penval.npy
             np.save(fileName, thearray)
-
+            #cv2.imwrite('Out.jpg',frame2)
             cv2.destroyAllWindows()
             break
 
@@ -213,4 +213,5 @@ def calculateInsertion(fileName, frame):
     cv2.destroyAllWindows()
 
 
-#calculateInsertion()
+#img = cv2.imread('BME3.jpeg')
+#calculateInsertion('Results', img)
