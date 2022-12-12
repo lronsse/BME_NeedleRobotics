@@ -124,7 +124,7 @@ def god():
             cv2.imshow('img', img)
             cv2.waitKey(0)
 
-            # Now we get teh x,y of the needle tip
+            # Now we get the x,y of the needle tip
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             ret, thresh = cv2.threshold(img_gray, 50, 255, cv2.THRESH_BINARY)
             # detect the contours on the binary image using cv2.CHAIN_APPROX_NONE
@@ -218,6 +218,6 @@ def god():
                     print('moving right')
 
                 # Update adjustment factor so we move less next time since we will be closer and to reach a termiation point
-                adjustmentFactor /= adjustmentFactor
+                adjustmentFactor /= 2
 god()
 
