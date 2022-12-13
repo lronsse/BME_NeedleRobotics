@@ -15,13 +15,13 @@ Controller = motor_controller()
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
-url = "http://145.94.151.26:8080/shot.jpg"
+url = "http://145.94.191.216:8080/shot.jpg"
 
 # Motor parameters
 frame_conversion = 150 / 1280  # pixel to mm # TODO: Should be converted properly with cropped frame
-step_dis_m1 = 100  # Motor steps required for 10 mm  Z axis
+step_dis_m1 = 1000 / 4.5  # Motor steps required for 10 mm  Z axis
 step_dis_m2 = 100  # Motor steps required for 10 mm  Theta modification clockwise
-step_dis_m3 = 100  # Motor steps required for 10 mm  X axis
+step_dis_m3 = 1000 / 9.9  # Motor steps required for 10 mm  X axis
 
 M1 = [0, 0]
 M2 = [0, 0]
@@ -122,7 +122,7 @@ def god():
         error = 100
         adjustmentFactor = 10
         maxE = 10  # Threshold error in mm
-        while error > 10:  # TODO: why 10?
+        while error > maxE:  # TODO: why 10?
             # Find current needle position
             # img_resp = requests.get(url)
             # img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
