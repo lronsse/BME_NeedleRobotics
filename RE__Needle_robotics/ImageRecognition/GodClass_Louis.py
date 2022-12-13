@@ -3,9 +3,7 @@ import numpy as np
 import imutils
 import requests
 import copy
-import matplotlib.pyplot
-from img2 import segmentImg2
-from matplotlib import pyplot as plt
+from RE__Needle_robotics.Steedle_software_package.img2 import segmentImg2
 from Motor_controller import motor_controller
 from CalculateInsertion import calculateInsertion
 

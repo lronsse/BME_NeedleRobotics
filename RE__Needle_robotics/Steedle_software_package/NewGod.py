@@ -6,6 +6,7 @@ import copy
 import matplotlib.pyplot
 from img2 import segmentImg2
 from matplotlib import pyplot as plt
+from pySerialTransfer import pySerialTransfer as txfer
 
 from CalculateInsertion import calculateInsertion
 
@@ -27,8 +28,68 @@ M1 = [0, 0]
 M2 = [0, 0]
 M3 = [0, 0]
 
-#link = Controller.Home()
-link = Controller.get_link()
+link = Controller.Home()
+# link = Controller.get_link()
+
+def send_arr(link, step_count_M1, step_count_M2, step_count_M3):
+    list_of_lists = [step_count_M1, step_count_M2, step_count_M3]
+
+    length = len(list_of_lists)
+
+    for i in range(length):
+        send_size = 0
+
+        ###################################################################
+        # Send lists
+        ###################################################################
+
+        list_ = list_of_lists[i]
+
+        list_size = link.tx_obj(list_)
+        send_size += list_size
+
+        ###################################################################
+        # Transmit all the data to send in a single packet
+        ###################################################################
+        link.send(send_size)
+
+        ###################################################################
+        # Wait for a response and report any errors while receiving packets
+        ###################################################################
+        while not link.available():
+            if link.status < 0:
+                if link.status == txfer.CRC_ERROR:
+                    print('ERROR: CRC_ERROR')
+                elif link.status == txfer.PAYLOAD_ERROR:
+                    print('ERROR: PAYLOAD_ERROR')
+                elif link.status == txfer.STOP_BYTE_ERROR:
+                    print('ERROR: STOP_BYTE_ERROR')
+                else:
+                    print('ERROR: {}'.format(link.status))
+
+        ###################################################################
+        # Parse response list
+        ###################################################################
+        rec_list = link.rx_obj(obj_type=type(list_),
+                               obj_byte_size=list_size,
+                               list_format='i')
+        """"       
+        rec_list_M2  = link.rx_obj(obj_type=type(list_M2),
+                                         obj_byte_size=list_size_M2,
+                                         list_format='i')
+
+        rec_list_M4  = link.rx_obj(obj_type=type(list_M4),
+                                         obj_byte_size=list_size_M4,
+                                         list_format='i')
+
+        """
+
+        ###################################################################
+        # Display the received data
+        ###################################################################
+        # print('SENT: {}'.format(list_))
+        # print('RCVD: {}'.format(rec_list))
+        # print(' ')
 
 def getTestImg(img, step):
 
@@ -36,7 +97,7 @@ def getTestImg(img, step):
     x, y, z = img.shape
     img = cv2.resize(img, (int(y / 2), int(x / 2)))
 
-    data = np.load('Output.npy')
+    data = np.load('../ImageRecognition/output.npy')
     arrX = data[0]
     arrZ = data[1]
     def fixArrZ(arrZ):
@@ -63,8 +124,8 @@ def needleTip(image):
     grayPlate = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
 
     # TODO: These colors will need to be min maxed
-    colorMin = np.array([50, 100, 100])
-    colorMax = np.array([120, 255, 255])
+    colorMin = np.array([1, 35, 44])
+    colorMax = np.array([13, 192, 193])
 
     holdImg = copy.deepcopy(image)
     mask = cv2.inRange(hsvPlate, colorMin, colorMax)
@@ -80,9 +141,10 @@ def needleTip(image):
 
 def god():
 
-    #img_resp = requests.get(url)
-    #img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
-    #frame = cv2.imdecode(img_arr, -1)
+    img_resp = requests.get(url)
+    img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
+    frame = cv2.imdecode(img_arr, -1)
+    frame = frame[300:700, 500:1920, :]
 
     # Get the first frame to use an input for next step
     #ret, frame = cap.read()
@@ -94,12 +156,13 @@ def god():
     fileName = 'output'
 
     # Get the intended insertion point and goal, then save to a file
-    calculateInsertion(fileName, cv2.imread('BME3.jpeg'))
+    calculateInsertion(fileName, frame)
 
     # Having calculated the parabola, extract the intended points
     data = np.load('{}.npy'.format(fileName))
     arrX = data[0]
     arrZ = data[1]
+
     def fixArrZ(arrZ):
         arr = copy.deepcopy(arrZ)
         placeholder = arr[-1]
@@ -107,6 +170,7 @@ def god():
             arr[i] = arrZ[i - 1]
         arr[0] = placeholder
         return arr
+
     arrZ = fixArrZ(arrZ)
     print(arrX)
 
@@ -124,30 +188,34 @@ def god():
         maxE = 10  # Threshold error in mm
         while error > maxE:  # TODO: why 10?
             # Find current needle position
-            # img_resp = requests.get(url)
-            # img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
-            # image = cv2.imdecode(img_arr, -1)
-            # x, y, z = image.shape
-            # image = cv2.resize(image, (int(y / 2), int(x / 2)))
+            img_resp = requests.get(url)
+            img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
+            image = cv2.imdecode(img_arr, -1)
+            image = image[300:700, 500:1920, :]
+            x, y, z = image.shape
+            image = cv2.resize(image, (int(y / 2), int(x / 2)))
             # For now we use this for debugging purposes
 
-            img = getTestImg('BME3.jpeg', step)
-            cv2.imshow('img', img)
-            cv2.waitKey(0)
+            #img = getTestImg('BME3.jpeg', step)
+            #cv2.imshow('img', img)
+            #cv2.waitKey(0)
+
             # Now having the image taken, we can do a mask to find the needle tip since its a unique color we chose
-            img = needleTip(img)
+            img = needleTip(image)
             cv2.imshow('img', img)
             cv2.waitKey(0)
 
             # Now we get the x,y of the needle tip
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            ret, thresh = cv2.threshold(img_gray, 50, 255, cv2.THRESH_BINARY)
+            ret, thresh = cv2.threshold(img_gray, 10, 255, cv2.THRESH_BINARY)
             # detect the contours on the binary image using cv2.CHAIN_APPROX_NONE
             contours, hierarchy = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
             cnts = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
             # draw contours on the original image
-            #image_copy = image.copy()
-            #res = cv2.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 0, 255), thickness=5)
+            image_copy = image.copy()
+            res = cv2.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=5)
+            cv2.imshow('img', res)
+            cv2.waitKey(0)
 
             cnts = imutils.grab_contours(cnts)
             cX = 0
@@ -159,6 +227,7 @@ def god():
                 cX = int(M["m10"] / M["m00"]) + cX
                 cZ = int(M["m01"] / M["m00"]) + cZ
                 count1 = count1 + 1
+                print(count1)
 
             # Actual co-ordiantes
             cX = int(cX / count1)
@@ -188,20 +257,22 @@ def god():
         adjustmentFactor = 10
         while error > maxE:
             # Find current needle position
-            # img_resp = requests.get(url)
-            # img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
-            # image = cv2.imdecode(img_arr, -1)z
-            # x, y, z = image.shape
-            # image = cv2.resize(image, (int(y / 2), int(x / 2)))
+            img_resp = requests.get(url)
+            img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8)
+            image = cv2.imdecode(img_arr, -1)
+            image = image[300:700, 500:1920, :]
+            x, y, z = image.shape
+            image = cv2.resize(image, (int(y / 2), int(x / 2)))
 
             # For now we use this for debugging purposes
-            img = getTestImg('BME3.jpeg', step)
+            #img = getTestImg('BME3.jpeg', step)
             # Now having the image taken, we can do a mask to find the needle tip since its a unique color we chose
-            img = needleTip(img)
+
+            img = needleTip(image)
 
             # Now we get teh x,y of the needle tip
             img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            ret, thresh = cv2.threshold(img_gray, 50, 255, cv2.THRESH_BINARY)
+            ret, thresh = cv2.threshold(img_gray, 10, 255, cv2.THRESH_BINARY)
             # detect the contours on the binary image using cv2.CHAIN_APPROX_NONE
             contours, hierarchy = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
             cnts = cv2.findContours(image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)

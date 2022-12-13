@@ -1,11 +1,10 @@
 # Import essential libraries
-import requests
 import cv2
 import numpy as np
 import imutils
 
 # Replace the below URL with your own. Make sure to add "/shot.jpg" at last.
-from img2 import segmentImg
+from RE__Needle_robotics.Steedle_software_package.img2 import segmentImg
 
 url = "http://145.94.251.91:8080/shot.jpg"
 

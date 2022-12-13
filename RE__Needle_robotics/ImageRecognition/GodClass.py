@@ -3,11 +3,7 @@ import numpy as np
 import imutils
 import requests
 import copy
-import matplotlib.pyplot
-from img2 import segmentImg2
-from matplotlib import pyplot as plt
-
-from CalculateInsertion import calculateInsertion
+from RE__Needle_robotics.Steedle_software_package.img2 import segmentImg2
 
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
