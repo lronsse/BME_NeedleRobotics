@@ -7,10 +7,9 @@ import matplotlib.pyplot
 from img2 import segmentImg2
 from matplotlib import pyplot as plt
 from pySerialTransfer import pySerialTransfer as txfer
-
 from CalculateInsertion import calculateInsertion
-
 from Motor_controller import motor_controller
+
 Controller = motor_controller()
 
 cap = cv2.VideoCapture(0)
