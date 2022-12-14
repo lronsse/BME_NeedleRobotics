@@ -174,11 +174,11 @@ while True:
         yP = np.append(yP, y)
         img = cv2.resize(img, None, fx=0.4, fy=0.4)
         cv2.imshow('res', img)
-        cv2.waitKey(0)
         cv2.imwrite(f'img{count}.jpg', img)
         count += 1
 
     if val == 'c':
         im1, im2 = input(f'Which two images do you want to compare? write their number').split()
+        im1, im2 = int(im1), int(im2)
         resV = np.sqrt((xP[im2] - xP[im1])**2 + (yP[im2] - yP[im1])**2)
         print(f'error is {resV}')
