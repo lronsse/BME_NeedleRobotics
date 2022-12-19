@@ -1,27 +1,27 @@
 #import Steedle_sercom
 import copy
 
-#from Motor_controller import motor_controller
+from Motor_controller import motor_controller
 from pySerialTransfer import pySerialTransfer as txfer
 import numpy as np
 import cv2
 import requests
 
-#Controller = motor_controller()
+Controller = motor_controller()
 
 def run():
     print('Attempting connection')
     # link = Controller.open_ser_com()
     link = ''
     print('connected with {}'.format(link))
-    #x, y = Controller.Move_tip(10, 10)
+    x, y = Controller.Move_tip(10, 10)
 
 def moveXY(x, y):
-    #x, y = Controller.Move_tip(x, y)
+    x, y = Controller.Move_tip(x, y)
     return x, y
 
 def moveZ(z):
-    # Current_X, Current_Y, X_coord, Y_coord = Controller.Insert(z)
+    Current_X, Current_Y, X_coord, Y_coord = Controller.Insert(z)
     return 0
 
 def nothing(x):
@@ -151,7 +151,8 @@ yP = np.array([])
 while True:
 
     val = input('what value do you wish to change : ')
-
+    if val == 'h':
+        link = Controller.Home()
     if val == 'xy':
         x, y = input(f'Enter x and y percentage : ').split()
         x, y = int(x), int(y)
