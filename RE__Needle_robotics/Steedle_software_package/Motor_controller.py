@@ -138,8 +138,8 @@ class motor_controller(object):
     def Home(self):
         print('starting homing')
         step_count_M1 = [28282, 3500]  # TODO: [28282, 2600]  # Z direction.
-        step_count_M2 = [28282, -2295]  # TODO: [28282, -2300]  # Rotation
-        step_count_M3 = [28282, 9690]  # TODO: [28282, 9500]  # Translation
+        step_count_M2 = [28282, -2410]  # TODO: [28282, -2300]  # Rotation
+        step_count_M3 = [28282, 9600]  # TODO: [28282, 9500]  # Translation
 
         self.K_pos = K_0  # Radius of circle
         self.Z_pos = K_0

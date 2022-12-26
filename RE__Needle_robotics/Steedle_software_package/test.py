@@ -82,8 +82,8 @@ def send_arr(link, step_count_M1, step_count_M2, step_count_M3):
 xV = 0
 yV = 0
 zV = 0
-#link = Controller.Home()
-link = Controller.get_link()
+link = Controller.Home()
+#link = Controller.get_link()
 
 M1 = [0, 0]  # M1 = [28282, 3500]  # 1000 --> 4.5 mm
 M2 = [0, 0]  # M2 = [28282, -2295]
