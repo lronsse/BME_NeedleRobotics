@@ -1,5 +1,6 @@
 # importing the module
 import cv2
+import pandas as pd
 from scipy.interpolate import interp1d
 
 
@@ -42,6 +43,8 @@ if __name__ == "__main__":
 
         if key == ord('s'):
             cv2.destroyAllWindows()
+        df = pd.read_csv('curve_data.csv')
+        
 
 # x_list = [1920 - x_list[i] for i in range(len(x_list))]
 # y_list = [1080 - y_list[i] for i in range(len(y_list))]
