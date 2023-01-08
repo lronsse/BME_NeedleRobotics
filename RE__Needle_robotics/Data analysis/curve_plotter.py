@@ -23,33 +23,32 @@ def click_event(event, x, y, flags, params):
                     1, (255, 0, 0), 2)
         cv2.imshow('image', img)
 
-
+total_coordx = []
+total_coordy = []
+total_coord = []
 # driver function
 if __name__ == "__main__":
     # reading the image
-    #for j in range(5):
-    x_list = []
-    y_list = []
-    img = cv2.imread('C:\My_Life\Apps\GitHub Desktop\BME_NeedleRobotics\RE__Needle_robotics\Data analysis\Curve\80 degrees\phantom 1\phantom1test1_insertion0.jpg', 1)
-    #img = cv2.resize(img, (1920, 1080))
-    #img = cv2.flip(img, 0)
-    # displaying the image
-    cv2.imshow('image', img)
+    for j in range(5):
+        x_list = []
+        y_list = []
+        img = cv2.imread(f'C:\My_Life\Apps\GitHub Desktop\BME_NeedleRobotics\RE__Needle_robotics\Data analysis\Curve\80 degrees\phantom 5\phantom5test2_insertion0.jpg', 1)
+        img = cv2.resize(img, (1920, 1080))
+        img = cv2.flip(img, 1)
+        # displaying the image
+        cv2.imshow('image', img)
 
-    # setting mouse handler for the image
-    # and calling the click_event() function
-    cv2.setMouseCallback('image', click_event)
-    #z = np.polyfit(x, y, 3)
-    # wait for a key to be pressed to exit
-    #key = cv2.waitKey(1)
-
-    #if key == ord('s'):
-    #    cv2.destroyAllWindows()
-    #df = pd.read_csv('curve_data.csv')
-        
-
-# x_list = [1920 - x_list[i] for i in range(len(x_list))]
-# y_list = [1080 - y_list[i] for i in range(len(y_list))]
-
-list_coord = [x_list, y_list]
-print(list_coord)
+        # setting mouse handler for the image
+        # and calling the click_event() function
+        cv2.setMouseCallback('image', click_event)
+        #z = np.polyfit(x, y, 3)
+        # wait for a key to be pressed to exit
+        key = cv2.waitKey(0)
+        x_list = [x_list[i] - x_list[0] for i in range(len(x_list))]
+        y_list = [y_list[i] - y_list[0] for i in range(len(y_list))]
+        y_list = [-y_list[i] for i in range(len(y_list))]
+        list_coord = [x_list, y_list]
+        #total_coordx.append(x_list)
+        #total_coordy.append(y_list)
+        #total_coord.append(list_coord)
+        print(f'test {j+1} : {list_coord}')
