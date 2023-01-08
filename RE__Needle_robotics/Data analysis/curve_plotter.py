@@ -32,7 +32,7 @@ if __name__ == "__main__":
     for j in range(5):
         x_list = []
         y_list = []
-        img = cv2.imread(f'C:\My_Life\Apps\GitHub Desktop\BME_NeedleRobotics\RE__Needle_robotics\Data analysis\Curve\80 degrees\phantom 5\phantom5test5_insertion0.jpg', 1)
+        img = cv2.imread(f'C:\My_Life\Apps\GitHub Desktop\BME_NeedleRobotics\RE__Needle_robotics\Data analysis\Curve\90 degrees\phantom6\phantom6\phantom6test5_insertion.jpg', 1)
         img = cv2.resize(img, (1920, 1080))
         img = cv2.flip(img, 1)
         # displaying the image
