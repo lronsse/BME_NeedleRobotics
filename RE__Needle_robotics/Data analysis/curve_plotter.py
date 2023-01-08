@@ -1,6 +1,7 @@
 # importing the module
 import cv2
 import pandas as pd
+import numpy as np
 from scipy.interpolate import interp1d
 
 
@@ -26,24 +27,25 @@ def click_event(event, x, y, flags, params):
 # driver function
 if __name__ == "__main__":
     # reading the image
-    for j in range(5):
-        x_list = []
-        y_list = []
-        img = cv2.imread(f'C:\My_Life\Apps\GitHub Desktop\BME_NeedleRobotics\RE__Needle_robotics\Data analysis\Curve\80 degrees\phantom 1\phantom1test{j + 1}_insertion0.jpg', 1)
+    #for j in range(5):
+    x_list = []
+    y_list = []
+    img = cv2.imread('C:\My_Life\Apps\GitHub Desktop\BME_NeedleRobotics\RE__Needle_robotics\Data analysis\Curve\80 degrees\phantom 1\phantom1test1_insertion0.jpg', 1)
+    #img = cv2.resize(img, (1920, 1080))
+    #img = cv2.flip(img, 0)
+    # displaying the image
+    cv2.imshow('image', img)
 
-        # displaying the image
-        cv2.imshow('image', img)
+    # setting mouse handler for the image
+    # and calling the click_event() function
+    cv2.setMouseCallback('image', click_event)
+    #z = np.polyfit(x, y, 3)
+    # wait for a key to be pressed to exit
+    #key = cv2.waitKey(1)
 
-        # setting mouse handler for the image
-        # and calling the click_event() function
-        cv2.setMouseCallback('image', click_event)
-
-        # wait for a key to be pressed to exit
-        key = cv2.waitKey(1)
-
-        if key == ord('s'):
-            cv2.destroyAllWindows()
-        df = pd.read_csv('curve_data.csv')
+    #if key == ord('s'):
+    #    cv2.destroyAllWindows()
+    #df = pd.read_csv('curve_data.csv')
         
 
 # x_list = [1920 - x_list[i] for i in range(len(x_list))]
