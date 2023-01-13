@@ -3,9 +3,9 @@ import numpy as np
 plt.close()
 fig = plt.figure(figsize=[10, 100])
 plt.xlim(0, 1)
-plt.ylim(-0.04, 0.1)
-plt.xlabel('insertion depth [%]')
-plt.ylabel('y direction[%]')
+plt.ylim(0, 0.2)
+plt.xlabel('Insertion depth [%]')
+plt.ylabel('Y direction[%]')
 ax = plt.gca()
 ax.set_aspect('equal', adjustable='box')
 
@@ -27,7 +27,7 @@ Total = [Phantom_1, Phantom_2, Phantom_3, Phantom_4, Phantom_5, Phantom_6]
 
 xp = np.linspace(0, 1, 300)
 count = 0
-for i in total:
+for i in Total:
     count += 1
     lim = i[0][-1]
     i[0] = [i[0][j] / lim for j in range(len(i[0]))]
@@ -37,8 +37,8 @@ for i in total:
     p = np.poly1d(coef)
     data = p(xp)
     data[0] = 0
-    plt.plot(xp, data, label=f'phantom {count}')
+    plt.plot(xp, data, label=f'Phantom {count}')
 
-
+plt.legend()
 #plt.show()
-plt.savefig('40_degrees.png', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('80_degrees.png', bbox_inches='tight', pad_inches=0.05)
