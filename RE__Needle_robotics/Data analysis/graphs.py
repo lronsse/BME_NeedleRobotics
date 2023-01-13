@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+#
+#  80 degree stuff
+#
+'''
 N = 6
 ind = np.arange(N)
 width = 0.25
@@ -21,7 +24,7 @@ plt.title("Errors for 80 degrees")
 
 plt.xticks(ind + width, ['Phantom 1', 'Phantom 2', 'Phantom 3', 'Phantom 4', 'Phantom 5', 'Phantom 6'])
 plt.legend((bar1, bar2), ('Error type 1', 'Error type 3'))
-plt.savefig('80_degrees_error.png', bbox_inches='tight', pad_inches=0.05)
+plt.savefig('80_degrees_error.png', bbox_inches='tight', pad_inches=0.05)'''
 
 
 #
