@@ -7,8 +7,7 @@ import copy
 import
 
 """
-This part will take in the camera shot and segment it into looking at only the area of interest 
-which will be marked with bright yellow tape.
+Exact same class as Proble_finder under steedle_software_package. Better documentation there.
 """
 
 

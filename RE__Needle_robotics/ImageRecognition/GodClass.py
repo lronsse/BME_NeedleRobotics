@@ -1,3 +1,10 @@
+"""
+First attempt at the feedback loop. This class is incomplete and was kept here as a reference. Please ignore it.
+A better and the updated version is Feedbackloop.py.
+
+@author: Arjun
+"""
+
 import cv2
 import numpy as np
 import imutils

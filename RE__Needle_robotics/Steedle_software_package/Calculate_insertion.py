@@ -1,3 +1,10 @@
+"""
+Calculate insertion is a function intended to find the parabolic path the needle must follow to reach the target position
+from the insertion point.
+
+@author: Arjun, Louis
+"""
+
 import cv2
 import numpy as np
 import copy
@@ -11,6 +18,10 @@ def nothing(x):
 
 
 def showImage(image):
+    """
+    Shows an image to the user
+    :param image: image to be shown
+    """
     img = cv2.imread(image)
     x, y, z = img.shape
     img = cv2.resize(img, (int(y / 2), int(x / 2)))
@@ -30,7 +41,7 @@ def main():
     # print(new_val)
     cv2.waitKey(0)
 
-
+# Fucntion borrowed from the original code.
 def draw(newX, newY, steps):
     # Variable set up
     I = 10  # The centre of the circle measured from the template
@@ -139,7 +150,13 @@ def draw(newX, newY, steps):
 
 
 def calculateInsertion(fileName, frame):
+    """
+    Function will take an frame and display it in a GUI that has trackbars for x, y value of initial insertion point
+    and the x, y value of the target point..
 
+    :param fileName: The file to save the numpy array.
+    :param frame: The frame of teh video to calculate the insertion on.
+    """
     cv2.namedWindow("Trackbars")
 
     img = 'BME3.jpeg'

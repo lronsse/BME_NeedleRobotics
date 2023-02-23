@@ -1,3 +1,12 @@
+"""
+
+Simple class using code borrowed from motor mover created by the original author.
+The only goal of this class is to be used as a replacement of their GUI allowing
+us to manually input commands to the motor while calibrating it.
+
+Author: Arjun, Louis
+"""
+
 #import Steedle_sercom
 from Motor_controller import motor_controller
 from pySerialTransfer import pySerialTransfer as txfer
@@ -79,6 +88,7 @@ def send_arr(link, step_count_M1, step_count_M2, step_count_M3):
         # print('RCVD: {}'.format(rec_list))
         # print(' ')
 
+# Basic setup to get the motors to connect
 xV = 0
 yV = 0
 zV = 0
@@ -90,8 +100,8 @@ M2 = [0, 0]  # M2 = [28282, -2295]
 M3 = [0, 0]  # M3 = [28282, 9690]  # 1000 --> 9.9
 send_arr(link, M1, M2, M3)
 
-#Controller.getShit()
 
+# This is where we just run a while loop to constantly input values, we can break this loop by using value s
 while True:
     val = input('what value do you wish to change : ')
     if val == 'xy':

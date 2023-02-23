@@ -1,3 +1,14 @@
+"""
+This part of the code was intended to try and run the motors in intervals. SO given a path, to try and make the motors to
+follow this path by splitting it into multiple smaller paths.
+
+The idea was to use the original authors code to calculate the path and try to split this path. However this did not work.
+
+Therefore this part of the code does not function as intended as was just a testing ground.
+
+@author: Arjun, Louis
+"""
+
 import numpy as np
 import matplotlib.pyplot as plt
 import time

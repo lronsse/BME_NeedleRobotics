@@ -4,10 +4,10 @@ import imutils
 import requests
 import copy
 import matplotlib.pyplot
-from img2 import segmentImg2
+from Probe_finder import segmentImg2
 from matplotlib import pyplot as plt
 from pySerialTransfer import pySerialTransfer as txfer
-from CalculateInsertion import calculateInsertion
+from Calculate_insertion import calculateInsertion
 from Motor_controller import motor_controller
 
 Controller = motor_controller()
@@ -15,7 +15,7 @@ Controller = motor_controller()
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)
 cap.set(4, 720)
-url = "http://145.94.191.216:8080/shot.jpg"
+url = "http://xxx.xxx:8080/shot.jpg"
 
 # Motor parameters
 frame_conversion = 150 / 1280  # pixel to mm # TODO: Should be converted properly with cropped frame
@@ -137,7 +137,39 @@ def needleTip(image):
     segPlate = cv2.dilate(segPlate, elementCircle)
 
     return segPlate
+"""
+The steps in the code are as follows:
+1) Get the current frame of the video.
+2) Allow the user to input the insertion position and the target manually via a GUI
+3) Find the segmented steps that the needle must take to reach the goal i.e. given the parabola it must follow, split it
+into smaller curves. Each such smaller curve is a step.
+4) For each step, the needle must be moved from its current x, y and z to the x,y and z of the step. To do so, first the
+needles x,y position is gradually brought to that of the intended x, y as follows:
+         while |current x - intended x| > max_error 
+            current x = adjust current x by adjustment_value
+            if |current x - intended x| > max_error:
+                adjustment_value = adjustment_value/adjustment_factor
+        while |current y - intended y| > max_error 
+            current y = adjust current y by adjustment_value
+            if |current y - intended y| > max_error:
+                adjustment_value = adjustment_value/adjustment_factor
+The idea here being that we slowly move the x, and y towards the correct value. This adjustment value starts large and 
+then gets smaller and smaller by a arte determined by the adjustment factor. This means that as it gets closer and 
+closer to the intended potion the changes become much smaller allowing for greater precision guaranteeing it does not 
+loop infinitely. The max_error here is just the maximum allowed error of the actual needle position to the intended 
+position.
+5) After priming the X and Y, the needle is then pushed by the intended z amount.
 
+The idea here is that given the initial manual input of the insertion location and goal location, the program would 
+automatically find the needle location via image processing and through iterative steps reach the goal position. The 
+image processing had been made in this project assuming a camera and a yellow needle tip. However this processing could
+be anything depending on the available tools. The idea behind the system would remain the same as above. We were unable 
+to finish this due to a misunderstanding of the original code. We had assumed that the movement code that was in the 
+original project would dynamically change the motor input i.e. when z is at 10 to move x, and y by 10 it would do a 
+motor input of 20 but when z is 40 and x and y change is 10,it would do a motor input of 100 as that is how it works in 
+their implementation. However we were unable to find just where they had this logic and we ran out of time to make our 
+own motor controller. That si why this function is incomplete.
+"""
 def god():
 
     img_resp = requests.get(url)

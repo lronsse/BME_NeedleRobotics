@@ -1,4 +1,14 @@
-# finding hsv range of target object(pen)
+"""
+
+Simple helper class that when run will connect to a camera feed via the internet and provides a GUI where the user can
+input the lower and upper bound of HSV values ot try segment specific colors from the video feed.
+This was used by us to try find the HSV values to segment the yellow tape from the video feed from out cameras to try
+segment the image in calculate insertion.
+
+@author: Arjun, Louis
+"""
+
+
 import cv2
 import numpy as np
 import time
@@ -11,7 +21,8 @@ def nothing(x):
 
 
 url = "BME4.jpeg"
-url = "http://145.94.191.216:8080/shot.jpg"
+# Not a real url
+url = "http://xxx.xxx:8080/shot.jpg"
 # Initializing the webcam feed.
 cap = cv2.VideoCapture(0)
 cap.set(3, 1280)

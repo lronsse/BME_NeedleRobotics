@@ -1,3 +1,18 @@
+"""
+
+This is the class we used to do the testing required for the report. The idea here was to do the follwoing:
+1) Home the probe
+2) Bring the probe to its insertion position
+3) Do the insertion and take a picture
+4) Zero the probe and take a picture
+5) Retract the probe and take a picture
+
+This class is to replace the gui that was built by the original authors giving us greater control of the insertion by
+just using numbers directly. Gives complete control of the needle to the user.
+
+@author: Arjun, Louis
+"""
+
 #import Steedle_sercom
 import copy
 
@@ -28,6 +43,7 @@ def moveZ(z):
 def nothing(x):
     pass
 
+# Modified calculate insertion from the class of the same name
 def calculateInsertion(frame):
 
     cv2.namedWindow("Trackbars")
@@ -153,6 +169,14 @@ xPr = np.array([])
 yPr = np.array([])
 xPm = np.array([])
 yPm = np.array([])
+
+"""
+Here is the true loop used to control the motor.
+
+The basic idea is that the user can manually input a x, y, z position to move the needle there and then tell it to take 
+a picture. While taking the picture it will name is as per instruction and calculate the values we need to perform an 
+analysis on them.
+"""
 
 while True:
 

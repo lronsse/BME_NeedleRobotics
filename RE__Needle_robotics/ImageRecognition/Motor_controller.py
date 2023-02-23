@@ -2,6 +2,9 @@
 """
 Created on Fri May  7 09:40:35 2021
 
+Arjun, and Louis's notes: we just lifted this code and put it in this folder to slighly modify a few numbers it for our purposes.
+Otherwise it is the same as the original.
+
 @author: Rolf
 """
 
