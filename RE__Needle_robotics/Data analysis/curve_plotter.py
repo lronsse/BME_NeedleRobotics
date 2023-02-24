@@ -4,7 +4,10 @@ import pandas as pd
 import numpy as np
 from scipy.interpolate import interp1d
 
-
+'''
+Code used to discretise the shape and curvature of the needle path during hte curved insertion tests in order to plot 
+them for the report.
+'''
 # function to display the coordinates of
 # of the points clicked on the image
 def click_event(event, x, y, flags, params):

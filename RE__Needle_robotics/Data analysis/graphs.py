@@ -1,6 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+'''
+simple plotting of the error found during the tests.
+'''
+
+
 #
 #  80 degree stuff
 #
